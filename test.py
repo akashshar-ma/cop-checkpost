@@ -3,7 +3,8 @@ import pytesseract  # Tesseract OCR
 import numpy as np  # Numpy
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"  # Path to tesseract.exe
-cascade = cv2.CascadeClassifier("haarcascade_russian_plate_number.xml")  # Path to haarcascade_russian_plate_number.xml
+cascade = cv2.CascadeClassifier(
+    r"C:\Users\utkar\Documents\GitHub\cop-checkpost\indian_car_plates.xml")  # Path to haarcascade_russian_plate_number.xml
 
 states = {"AN": "Andaman and Nicobar", "AP": "Andhra Pradesh", "AR": "Arunachal Pradesh", "AS": "Assam", "BR": "Bihar",
           "CH": "Chandigarh", "DN": "Dadra and Nagar Haveli", "DD": "Daman and Diu", "DL": "Delhi", "GA": "Goa",
@@ -13,12 +14,14 @@ states = {"AN": "Andaman and Nicobar", "AP": "Andhra Pradesh", "AR": "Arunachal 
           "MZ": "Mizoram", "NL": "Nagaland", "OD": "Odissa", "PY": "Pondicherry", "PN": "Punjab", "RJ": "Rajasthan",
           "SK": "Sikkim", "TN": "TamilNadu", "TR": "Tripura", "UP": "Uttar Pradesh", "WB": "West Bengal",
           "CG": "Chhattisgarh", "TS": "Telangana", "JH": "Jharkhand", "UK": "Uttarakhand"}  # State names
+"""cap = cv2.VideoCapture(2)	# change it
+cap.set(3, 1280)
+cap.set(4, 720)
+"""
 
 
 def extract_num(img_name):
     img = cv2.imread(img_name)  # Reading Image
-    print(img.shape)  # (480, 640, 3)
-    # Converting into Gray
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # (480, 640)
     print(gray)  # <numpy.ndarray shape=(480, 640) dtype=uint8>
     # Detecting plate
@@ -36,8 +39,10 @@ def extract_num(img_name):
         (thresh, plate) = cv2.threshold(plate_gray, 127, 255, cv2.THRESH_BINARY)
         # Feed Image to OCR engine
         read = pytesseract.image_to_string(plate)
+
         read = ''.join(e for e in read if e.isalnum())
-        print(read)
+        read.replace("I", "1")
+        read.replace("O", "Q")
         stat = read[0:2]
         try:
             # Fetch the State information
@@ -53,11 +58,9 @@ def extract_num(img_name):
         cv2.imwrite('plate.jpg', plate)
 
     cv2.imshow("Result", img)
-    cv2.imwrite('result.jpg', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 
 # Let's make a function call
 extract_num('img.png')
-
