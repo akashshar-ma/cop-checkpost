@@ -2,8 +2,8 @@ import cv2  # OpenCV
 import pytesseract  # Tesseract OCR
 import numpy as np  # Numpy
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"   # Path to tesseract.exe
-cascade = cv2.CascadeClassifier("haarcascade_russian_plate_number.xml") # Path to haarcascade_russian_plate_number.xml
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"  # Path to tesseract.exe
+cascade = cv2.CascadeClassifier("haarcascade_russian_plate_number.xml")  # Path to haarcascade_russian_plate_number.xml
 
 states = {"AN": "Andaman and Nicobar", "AP": "Andhra Pradesh", "AR": "Arunachal Pradesh", "AS": "Assam", "BR": "Bihar",
           "CH": "Chandigarh", "DN": "Dadra and Nagar Haveli", "DD": "Daman and Diu", "DL": "Delhi", "GA": "Goa",
@@ -17,16 +17,16 @@ states = {"AN": "Andaman and Nicobar", "AP": "Andhra Pradesh", "AR": "Arunachal 
 
 def extract_num(img_name):
     img = cv2.imread(img_name)  # Reading Image
-    print(img.shape)    # (480, 640, 3)
+    print(img.shape)  # (480, 640, 3)
     # Converting into Gray
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)    # (480, 640)
-    print(gray)   # <numpy.ndarray shape=(480, 640) dtype=uint8>
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # (480, 640)
+    print(gray)  # <numpy.ndarray shape=(480, 640) dtype=uint8>
     # Detecting plate
-    nplate = cascade.detectMultiScale(gray, 1.1, 4) # (480, 640)
+    nplate = cascade.detectMultiScale(gray, 1.1, 4)  # (480, 640)
     for (x, y, w, h) in nplate:
         # Crop a portion of plate
-        a, b = (int(0.02 * img.shape[0]), int(0.025 * img.shape[1]))    # (0.02, 0.025)
-        plate = img[y + a:y + h - a, x + b:x + w - b, :]    # (480, 640, 3)
+        a, b = (int(0.02 * img.shape[0]), int(0.025 * img.shape[1]))  # (0.02, 0.025)
+        plate = img[y + a:y + h - a, x + b:x + w - b, :]  # (480, 640, 3)
         # make image more darker to identify the LPR
         # iMAGE PROCESSING
         kernel = np.ones((1, 1), np.uint8)
